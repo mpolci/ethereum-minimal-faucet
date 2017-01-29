@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Faucet</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.min.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href="app.css" rel='stylesheet' type='text/css'>
+  <script src="./lib/web3.min.js"></script>
+  <script src="./app.js"></script>
+</head>
+<body ng-cloack>
+  <h1>Ethereum development network faucet</h1>
+
+  <div ng-controller="FaucetController as faucet">
+      <h1>Eth withdrawal</h1>
+      <div class="action">
+        <label for="send-address">Your address: </label>
+        <input id="send-address" type="text" ng-model="faucet.destinationAddressInput">
+        <button ng-click="faucet.cmdSendEth()">Send some eth</button>
+        <div ng-if="faucet.ethMessage">{{faucet.ethMessage}}</div>
+      </div>
+
+      <h1>Create a new token</h1>
+      <div class="action">
+        <label for="send-address2">Your address: </label>
+        <input id="send-address2" type="text" ng-model="faucet.destinationAddressInput">
+
+        <label for="tokenName">Name: </label>
+        <input id="tokenName" type="text" ng-model="faucet.tokenName">
+
+        <label for="tokenSymbol">Symbol: </label>
+        <input id="tokenSymbol" type="text" ng-model="faucet.tokenSymbol">
+
+        <label for="tokenTotalSupply">Total supply: </label>
+        <input id="tokenTotalSupply" type="text" ng-model="faucet.tokenTotalSupply">
+
+        <label for="tokenDecimals">Decimals: </label>
+        <input id="tokenDecimals" type="text" ng-model="faucet.tokenDecimals">
+
+        <button ng-click="faucet.cmdDeployToken()">Create and send tokens</button>
+        <div ng-if="faucet.tokMessage">{{faucet.tokMessage}}</div>
+      </div>
+  </div>
+
+
+  <script>
+    window.addEventListener('load', function() {
+      angular.bootstrap(document, ['faucetApp'])
+    })
+  </script>
+</body>
+</html>
