@@ -8,7 +8,7 @@ angular.module('faucetApp', [])
   var self = this
   angular.extend(this, {
     accounts: [],
-    destinationAddressInput: '0x3dc9115ff05d011f48a06e1d56fc7fbbb784e7cc',
+    destinationAddressInput: '',
     ethMessage: null,
     tokenName: '',
     tokenSymbol: '',
