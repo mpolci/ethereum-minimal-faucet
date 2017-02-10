@@ -33,8 +33,10 @@
         <input id="tokenSymbol" type="text" ng-model="faucet.tokenSymbol">
 
         <label for="tokenTotalSupply">Total supply: </label>
-        <input id="tokenTotalSupply" type="text" ng-model="faucet.tokenTotalSupply">
-
+        <input id="tokenTotalSupply" type="text" ng-model="faucet.tokenTotalSupply"
+               big-number decimals="{{ faucet.tokenDecimals }}">
+        <!--decimals="2"-->
+        <p>Value: {{ faucet.tokenTotalSupply }}</p>
         <label for="tokenDecimals">Decimals: </label>
         <input id="tokenDecimals" type="text" ng-model="faucet.tokenDecimals">
 

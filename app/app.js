@@ -16,7 +16,7 @@ angular.module('faucetApp', [])
     ethMessage: null,
     tokenName: '',
     tokenSymbol: '',
-    tokenTotalSupply: 100,
+    tokenTotalSupply: web3.toBigNumber(1000),
     tokenDecimals: 0,
     tokMessage: null,
 
@@ -59,7 +59,6 @@ angular.module('faucetApp', [])
 
   function cmdDeployToken () {
     self.tokMessage = ''
-    var supply = self.tokenTotalSupply * Math.pow(10, self.tokenDecimals)
     var tokenContract = web3.eth.contract(JSON.parse(abi))
     var from = self.accounts[Math.floor(Math.random() * self.accounts.length)]
 
@@ -84,7 +83,7 @@ angular.module('faucetApp', [])
     }
 
     var createData = tokenContract.new.getData(
-      supply,
+      self.tokenTotalSupply,
       self.tokenName,
       self.tokenDecimals,
       self.tokenSymbol,
@@ -107,7 +106,7 @@ angular.module('faucetApp', [])
             console.log('created token at address', contractAddress)
             var token = tokenContract.at(contractAddress)
 
-            var data = token.transfer.getData(self.destinationAddressInput, supply)
+            var data = token.transfer.getData(self.destinationAddressInput, self.tokenTotalSupply)
             web3.eth.sendTransaction(
               { from: from, to: token.address, data: data, gas: 300000 },
               function (err, txid) {
@@ -127,4 +126,52 @@ angular.module('faucetApp', [])
     )
   }
 
+})
+
+.directive('bigNumber', function () {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function(scope, element, attrs, modelCtrl) {
+      var decimals = null
+
+      attrs.$observe('decimals', function(value) {
+        var intVal = parseInt(value)
+        decimals = isNaN(intVal) || value < 0 ? null : intVal
+      })
+
+      function format(modelValue) {
+        if (modelValue == null) return modelValue
+        var num = decimals != null
+          ? modelValue.shift(-decimals)
+          : modelValue
+        return num.toString()
+      }
+
+      modelCtrl.$parsers.push(function (inputValue) {
+        if (inputValue == null || inputValue === '') return null
+        var allowedDot = decimals == null || decimals !== 0
+        var lastCharIsDot = inputValue.slice(-1) === '.'
+        var transformedInput
+        try {
+          transformedInput = web3.toBigNumber(inputValue)
+          if (decimals != null) {
+            transformedInput = transformedInput.shift(decimals).truncated()
+          }
+        } catch (e) {
+          // restore previous value
+          transformedInput = modelCtrl.$modelValue
+        }
+        var newViewValue = format(transformedInput)
+        if (newViewValue !== inputValue &&
+          (!lastCharIsDot || !allowedDot)) {
+          modelCtrl.$viewValue = newViewValue
+          modelCtrl.$render()
+        }
+        return transformedInput
+      })
+
+      modelCtrl.$formatters.unshift(format)
+    }
+  }
 })
