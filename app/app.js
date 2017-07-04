@@ -1,7 +1,12 @@
 
-var ethereumRpc = 'http://localhost:8545'
+if (!ethereumRpc) {
+  window.ethereumRpc = 'http://localhost:8545'
+}
 
-var web3 = new Web3(new Web3.providers.HttpProvider(ethereumRpc))
+if (!web3) {
+  window.web3 = new Web3(new Web3.providers.HttpProvider(ethereumRpc))
+}
+
 angular.module('faucetApp', [])
 .controller('FaucetController', function ($scope) {
   var self = this
@@ -99,6 +104,7 @@ angular.module('faucetApp', [])
           self.tokMessage = msg
           $scope.$apply()
           waitContract(txHash, function (contractAddress) {
+            console.log('created token at address', contractAddress)
             var token = tokenContract.at(contractAddress)
 
             var data = token.transfer.getData(self.destinationAddressInput, supply)
